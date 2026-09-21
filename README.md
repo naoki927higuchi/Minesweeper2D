@@ -100,3 +100,9 @@ dotnet run --project .\Tests\Rules.Tests.csproj --configuration Release --no-res
 
 開発中のZIPはローカル管理のみとし、公開時に選定したZIPだけをGitHubへ送ります。
 出力先・検証・公開準備の手順は [RELEASE-POLICY.md](RELEASE-POLICY.md) を参照してください。
+
+## GitHubから取得する配布ZIP
+
+- [Minesweeper2D 1.0.0](Distribution/Minesweeper2D-1.0.0-Windows.zip) / [SHA256](Distribution/Minesweeper2D-1.0.0-Windows.zip.sha256)
+
+アクセス権のあるユーザーがZIPのファイル画面からダウンロードできます。ZIP全体を展開し、同梱説明書に従ってください。
