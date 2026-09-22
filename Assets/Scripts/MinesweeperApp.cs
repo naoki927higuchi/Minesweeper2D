@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Minesweeper
 {
-    public sealed class MinesweeperApp : MonoBehaviour
+    public sealed partial class MinesweeperApp : MonoBehaviour
     {
         private readonly int[] widths = { 9, 16, 30 }, heights = { 9, 16, 16 }, counts = { 10, 40, 99 };
         private readonly string[] levels = { "初級", "中級", "上級" };
@@ -31,7 +31,9 @@ namespace Minesweeper
             var camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true; camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = background; camera.cullingMask = 0;
-            font = Font.CreateDynamicFontFromOSFont(new[] { "Yu Gothic", "Meiryo", "Arial" }, 32);
+            font = Application.platform == RuntimePlatform.Android
+                ? Resources.Load<Font>("NotoSansJP-Regular")
+                : Font.CreateDynamicFontFromOSFont(new[] { "Yu Gothic", "Meiryo", "Arial" }, 32);
             dot = new Texture2D(32, 32, TextureFormat.RGBA32, false);
             for (int y = 0; y < 32; y++) for (int x = 0; x < 32; x++)
             {
@@ -44,14 +46,21 @@ namespace Minesweeper
         }
 
         private static Color Hex(string value) { ColorUtility.TryParseHtmlString("#" + value, out Color color); return color; }
-        private void Update() { if (focused && !help && board.State == GameState.Playing) elapsed += Time.unscaledDeltaTime; }
+        private void Update()
+        {
+            if (focused && !paused && !help && board.State == GameState.Playing) elapsed += Time.unscaledDeltaTime;
+            if (Application.platform == RuntimePlatform.Android) HandleTouch();
+        }
+        private bool paused;
+        private void OnApplicationPause(bool value) { paused = value; touchId = -1; }
         private void OnApplicationFocus(bool value) { focused = value; }
-        private void OnDestroy() { if (dot != null) Destroy(dot); if (font != null) Destroy(font); }
+        private void OnDestroy() { if (dot != null) Destroy(dot); if (font != null && Application.platform != RuntimePlatform.Android) Destroy(font); }
 
         private void NewGame()
         {
             board = new MineBoard(widths[difficulty], heights[difficulty], counts[difficulty], Guid.NewGuid().GetHashCode());
             elapsed = 0; selected = 0; keyboardSelection = false;
+            flagMode = false; boardScroll = Vector2.zero; touchId = -1;
         }
 
         private void SelectLevel(int index)
@@ -92,6 +101,7 @@ namespace Minesweeper
         {
             if (board == null) return;
             InitStyles();
+            if (Application.platform == RuntimePlatform.Android) { DrawMobile(); return; }
             float scale = Mathf.Min(Screen.width / 1160f, Screen.height / 860f);
             var oldMatrix = GUI.matrix;
             GUI.matrix = Matrix4x4.TRS(new Vector3((Screen.width - 1160 * scale) / 2, (Screen.height - 860 * scale) / 2), Quaternion.identity, Vector3.one * scale);
@@ -127,15 +137,16 @@ namespace Minesweeper
             GUI.matrix = oldMatrix;
         }
 
-        private void DrawBoard()
+        private void DrawBoard(float cellOverride = 0, bool mobile = false)
         {
-            float cell = Mathf.Min(52, Mathf.Min(1032f / board.Width, 512f / board.Height));
-            float left = 580 - board.Width * cell / 2, top = 516 - board.Height * cell / 2;
+            float cell = mobile ? cellOverride : Mathf.Min(52, Mathf.Min(1032f / board.Width, 512f / board.Height));
+            float left = mobile ? -boardScroll.x : 580 - board.Width * cell / 2;
+            float top = mobile ? -boardScroll.y : 516 - board.Height * cell / 2;
             Event e = Event.current;
             for (int i = 0; i < board.Width * board.Height; i++)
             {
                 Rect r = new Rect(left + i % board.Width * cell + 1, top + i / board.Width * cell + 1, cell - 2, cell - 2);
-                bool hover = !help && r.Contains(e.mousePosition);
+                bool hover = !mobile && !help && r.Contains(e.mousePosition);
                 bool revealed = board.IsOpen(i);
                 Color color = revealed ? Hex("202E39") : Hex("344956");
                 if (hover && !board.Finished) color = revealed ? Hex("2C3E4B") : Hex("476473");

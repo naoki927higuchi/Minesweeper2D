@@ -48,3 +48,12 @@
 - Issues、Pull requests、Discussions、Wiki、Projects、Actionsは無効。外部の共同編集者を追加しない。
 - 秘密情報スキャンとpush protection、Dependabot通知を有効化し、既定ブランチのforce push・削除を禁止する。
 - コメント等のinteraction limitはGitHubの上限6か月で設定する。恒久設定ではないため、期限前に設定を再確認する。
+
+## Androidの配布・フォルダー規約（2026-09-22）
+
+- Windowsと共通のVERSIONを正とし、互換機能追加はマイナー更新、修正はパッチ更新。HISTORY.mdに日時と概要を記録し、検証後ローカルコミットを作成する。
+- APKは `bin/Android/Release-<Version>/Minesweeper-<Version>.apk` に出力し、SHA256・マニフェスト・署名の検証結果を併置する。Windows出力と分離しGit対象外とする。
+- AndroidはARM64/IL2CPP Release。Development Build、Script Debugging、Profiler、シンボル生成を無効化し、実際のAPKを検証する。Google Play向けAABは不要。
+- 専用Release鍵を使用する。鍵とDPAPI暗号化パスワードは `.local/android-signing/` に保管しGitへ追加しない。秘密情報をソースやログに記録しない。同一アプリの更新には同一鍵を使う。
+- 完成済みの同版APKを上書きしない。失敗した検証用ビルドはログとともにBuildsの作業領域へ退避して再試行できる。公開済み成果物は変更しない。
+- 実機へのインストールとプレイ確認はAPK生成と別工程。未確認を確認済みと報告しない。公開・pushは別途指示の範囲のみ。

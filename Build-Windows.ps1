@@ -20,7 +20,7 @@ if (Test-Path -LiteralPath $lockPath) {
     try {
         $lockProbe = [IO.File]::Open($lockPath, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::None)
         $lockProbe.Dispose()
-    } catch { throw 'This project is open in Unity. Use Minesweeper > Build Distribution ZIP, or close the Editor before running this script.' }
+    } catch { throw 'This project is open in Unity. Use Minesweeper > Build Release, or close the Editor before running this script.' }
 }
 $logDirectory = Join-Path $PSScriptRoot 'Builds\Logs'
 New-Item -ItemType Directory -Force -Path $logDirectory | Out-Null
@@ -30,11 +30,8 @@ Write-Host "Building Minesweeper $Version with Unity $editorVersion"
 Write-Host "Log: $buildLog"
 & $UnityEditor -batchmode -quit -nographics -projectPath $PSScriptRoot -buildTarget Win64 -executeMethod Minesweeper.Editor.WindowsBuild.BuildRelease -releaseVersion $Version -logFile $buildLog | Out-Host
 if ($LASTEXITCODE -ne 0) { throw "Unity build failed (exit $LASTEXITCODE). See $buildLog" }
-$releaseLine = Get-Content -LiteralPath $buildLog | Where-Object { $_ -match '^DISTRIBUTION_ZIP=' } | Select-Object -Last 1
-if (-not $releaseLine) { throw "Unity did not report a release artifact. See $buildLog" }
-$zipPath = $releaseLine.Substring('DISTRIBUTION_ZIP='.Length).Trim()
-if (-not (Test-Path -LiteralPath $zipPath -PathType Leaf)) { throw 'Reported ZIP does not exist.' }
-$expectedHash = ((Get-Content -LiteralPath ($zipPath + '.sha256') -Raw) -split '\s+')[0]
-if ((Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash -ine $expectedHash) { throw 'Release ZIP checksum mismatch.' }
-Write-Host "Ready to distribute: $zipPath"
-Write-Output $zipPath
+$releaseLine = Get-Content -LiteralPath $buildLog | Where-Object { $_ -match '^RELEASE_EXE=' } | Select-Object -Last 1
+if (-not $releaseLine) { throw "Unity did not report a release EXE. See $buildLog" }
+$exePath = $releaseLine.Substring('RELEASE_EXE='.Length).Trim()
+if (-not (Test-Path -LiteralPath $exePath -PathType Leaf)) { throw 'Reported EXE does not exist.' }
+Write-Output $exePath

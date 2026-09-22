@@ -31,6 +31,7 @@ static class Program
             }
             for (int i = 0; i < b.Width * b.Height; i++) if (!b.IsMine(i)) b.Reveal(i);
             Check(b.State == GameState.Won && b.Flags == b.MineCount, "All safe cells win and mark mines");
+            Check(Enumerable.Range(0, b.Width * b.Height).All(i => b.IsMine(i) == b.IsFlagged(i)), "Every remaining mine gets a flag on clear");
             int flags = b.Flags; b.ToggleFlag(0); b.Reveal(0);
             Check(b.Flags == flags && b.State == GameState.Won, "Won board is locked");
         }
@@ -46,6 +47,7 @@ static class Program
         var capped = new MineBoard(9, 9, 10, 2);
         for (int i = 0; i < 11; i++) capped.ToggleFlag(i);
         Check(capped.Flags == 10 && !capped.IsFlagged(10), "Flag count is capped");
+        Check(capped.State == GameState.Ready, "Flags alone do not clear the board");
         capped.ToggleFlag(0); capped.ToggleFlag(10);
         Check(capped.Flags == 10 && capped.IsFlagged(10), "Flags can be relocated");
 

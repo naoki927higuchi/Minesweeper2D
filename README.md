@@ -1,6 +1,6 @@
 # Minesweeper / FIELD NOTES
 
-Windows向けのUnity 2Dマインスイーパー。日本語UI、濃紺とミントの配色、ウィンドウサイズに合わせて拡縮する盤面を備えています。画像・有料アセット・外部サービスは不要です。
+Windows / Android向けのUnity 2Dマインスイーパー。日本語UI、濃紺とミントの配色、ウィンドウサイズに合わせて拡縮する盤面を備えています。画像・有料アセット・外部サービスは不要です。
 
 ## 起動
 
@@ -36,44 +36,40 @@ Windows向けのUnity 2Dマインスイーパー。日本語UI、濃紺とミン
 - 難易度の変更または「新しい盤面」で現在のゲームをリセットします。途中の盤面は保存しません。
 - 初手の安全性を保証しますが、推測なしで解けることまでは保証しません。
 
-## Windows用の再頒布パッケージを作る
+## Windows Releaseビルド
 
-Unityの再生を止め、**Minesweeper → Build Distribution ZIP (Windows x64)** を選択します。従来の **Build Windows x64** メニューも同じ処理を実行します。ビルド成功時には完成したZIPの保存場所が開きます。
+`./Build-Windows.ps1` またはUnityの **Minesweeper → Build Release (Windows x64)** を実行します。
+`VERSION` と同じ版数の `bin/Release-<Version>/Minesweeper.exe` を、必要なDLL・データと一緒に出力します。既存の出力先は上書きせず停止します。通常ビルドではZIPを作りません。
+公開用ZIPは公開準備時にだけ作成します。既存の `Builds/Releases/` と `Distribution/` のZIPは過去成果物として保持します。
 
-配布物は `Builds/Releases/Minesweeper-1.0.0-win-x64-日時-識別子.zip` と、そのZIPの `.sha256` ファイルです。受け取った人はZIPをすべて展開して `Minesweeper.exe` を起動できます。Unity EditorやHubは不要です。
+## Android Release APK
 
-バージョン番号の既定値はルートの `VERSION` ファイルで管理します（例：`1.0.0`、`1.1.0-rc.1`）。ビルドごとに別の作業フォルダーを使い、古い出力が混入しない構成です。過去のZIPや既存の `Builds/Windows` は上書きしません。
+Unity Hubで6000.6.2f1のAndroid Build Support・SDK・NDK・OpenJDKを追加し、PowerShell 7で `./Build-Android.ps1` を実行します。
+出力は `bin/Android/Release-<Version>/Minesweeper-<Version>.apk` と検証結果・SHA256です。
+Android 8.0以上のARM64端末向け、IL2CPP Release、Development Build / Script Debugging / Profiler / シンボル生成は無効です。Google Play向けAABは作成しません。
 
-ZIPには次が自動で含まれます。
+初回ビルド時にローカルの専用Release署名鍵を生成します。`.local/android-signing/` はGit対象外です。パスワードはWindows DPAPIで暗号化保存され、同じWindowsユーザーで復号します。今後の上書き更新に必要なので署名鍵と資格情報は安全にバックアップしてください。鍵を失うと同じアプリへの上書き更新はできません。
 
-- exe、データフォルダー、Monoランタイム、UnityPlayer.dllと付随する実行用ファイル。
-- `README-ja.txt`：起動方法・操作説明。
-- `build-info.txt`：ゲームとUnityのバージョン、ビルド日時、対象プラットフォーム。
-- `SHA256SUMS.txt`：同梱ファイルのSHA-256（この一覧自身を除く）。
+`Verify-Android.ps1` は署名・非debuggable・ARM64/IL2CPP・デバッグ用ファイルの非同梱を検証します。
 
-開発ビルドとデバッガー接続を無効にし、`.pdb`、`.mdb`、Unityの `DoNotShip` / `ButDontShipIt` ディレクトリを配布物から除外します。exe・UnityPlayer.dll・ゲームデータ・ゲームアセンブリ・Monoランタイムの存在を検証してからZIPを公開します。
-
-PowerShellでビルドする場合は、Unityでこのプロジェクトを閉じてから実行します。使用中ならエラーにして、Editorからのビルドを案内します。Unityのライセンスが有効になっている必要があります。
+端末のUSBデバッグを有効にし、PCの接続を許可した後、SDKのadbでインストールします。
 
 ```powershell
-.\Build-Windows.ps1
-# 今回のビルドだけバージョン番号を指定
-.\Build-Windows.ps1 -Version 1.0.1
-# Editorを別の場所にインストールしている場合
-.\Build-Windows.ps1 -UnityEditor 'D:\Unity\6000.6.2f1\Editor\Unity.exe'
+adb devices -l
+adb -s <端末ID> install -r bin/Android/Release-1.1.0/Minesweeper-1.1.0.apk
+adb -s <端末ID> shell monkey -p com.fieldnotes.minesweeper 1
 ```
 
-CLIはUnityの終了コード、今回の成果物パス、ZIPのSHA-256を検証します。過去のexeが残っていても今回の成功とは扱いません。
+Androidは縦画面・セーフエリア対応です。「開く」「旗」を切り替えてタップし、大きな盤面はスワイプで移動します。開くモードで数字をタップすると、周囲の旗が数字と同数なら一括開放します。ドラッグや複数指操作ではマスを開きません。新しい盤面・難易度変更後は開くモードに戻ります。アプリがバックグラウンドに入るとタイマーを停止します。
 
-ビルドログは `Builds/Logs/日時-識別子.log`、ビルド途中のファイルと展開済み配布物は `Builds/Staging/` に残します。`Staging` は配布不要です。調査が不要になった作業フォルダーは手動で削除できます。`Releases` の完成済みZIPだけを渡してください。
-
+日本語フォントとしてNoto Sans JPを同梱します。ライセンスは `Assets/Resources/NotoSansJP-LICENSE.txt`（SIL OFL 1.1）です。Windowsでは既存のOSフォントとマウス・キーボード操作を維持します。両OSで同じ `MineBoard` を使用し、全安全マスの開放によるクリアと、残り地雷への自動旗立ては共通です。
 ## 構成
 
 - `Assets/Scripts/MineBoard.cs`：Unityに依存しないゲームルール。
 - `Assets/Scripts/MinesweeperApp.cs`：日本語のIMGUI画面、入力、時間計測、保存。2Dの正投影カメラを生成します。
 - `Assets/Editor/WindowsBuild.cs`：UnityのWindows x64リリースビルド。
 - `Assets/Editor/ReleasePackage.cs`：実行ファイルの検証、配布物の選別、ZIPとチェックサムの生成。
-- `Build-Windows.ps1`：Editor検出、CLI実行、完成ZIPの検証。
+- `Build-Windows.ps1`：Editor検出、CLI実行、完成EXEの検証。
 - `VERSION` と `Distribution/README-ja.txt`：配布バージョンと同梱する説明書。
 - `Tests/Program.cs` と `Tests/PackagingTests.cs`：外部テストパッケージ不要のルール・パッケージテスト。
 
@@ -90,7 +86,7 @@ dotnet run --project .\Tests\Rules.Tests.csproj --configuration Release --no-res
 
 全3難易度×100シードの地雷数・隣接数・初手保護・連鎖開放・勝利判定に加え、旗、一括開放の成功と失敗、敗北後の操作禁止、不正入力を検証します。
 
-実行結果：**300盤面・170,009件のチェックに合格**（.NET 9.0.305）。
+実行結果：**300盤面・170,310件のチェックに合格**（.NET 9.0.305）。
 
 パッケージテストは、実際にZIPを生成し、全ファイルのハッシュ、必要DLLの保持、デバッグファイルの除外、上書き禁止、不正バージョン、欠損ファイル、出力先の再帰混入を検証します。
 

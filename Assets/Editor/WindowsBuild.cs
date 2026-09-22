@@ -13,7 +13,7 @@ namespace Minesweeper.Editor
         [MenuItem("Minesweeper/Build Windows x64")]
         public static void Build() { BuildRelease(); }
 
-        [MenuItem("Minesweeper/Build Distribution ZIP (Windows x64)")]
+        [MenuItem("Minesweeper/Build Release (Windows x64)")]
         public static void BuildRelease()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)
@@ -21,9 +21,8 @@ namespace Minesweeper.Editor
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string version = Argument("-releaseVersion") ?? File.ReadAllText(Path.Combine(root, "VERSION")).Trim();
             ReleasePackage.ValidateVersion(version);
-            string id = ReleasePackage.NewId(version);
-            string job = Path.Combine(root, "Builds", "Staging", id);
-            string player = Path.Combine(job, "Player");
+            string player = Path.Combine(root, "bin", "Release-" + version);
+            if (Directory.Exists(player)) throw new IOException("Output already exists: " + player);
             Directory.CreateDirectory(player);
 
             // Apply settings only on an explicit build, never on script reload.
@@ -44,14 +43,11 @@ namespace Minesweeper.Editor
                 options = BuildOptions.None
             });
             if (report.summary.result != BuildResult.Succeeded)
-                throw new Exception("Windows build failed: " + report.summary.result + ". Staging: " + job);
+                throw new Exception("Windows build failed: " + report.summary.result);
             if ((report.summary.options & (BuildOptions.Development | BuildOptions.AllowDebugging)) != 0)
                 throw new Exception("Distribution builds must not enable development or debugging.");
-            string zip = ReleasePackage.Create(player, Path.Combine(job, "Package"),
-                Path.Combine(root, "Builds", "Releases"), id, version, Application.unityVersion,
-                File.ReadAllText(Path.Combine(root, "Distribution", "README-ja.txt")));
-            Debug.Log("DISTRIBUTION_ZIP=" + zip);
-            if (!Application.isBatchMode) EditorUtility.RevealInFinder(zip);
+            Debug.Log("RELEASE_EXE=" + Path.Combine(player, "Minesweeper.exe"));
+            if (!Application.isBatchMode) EditorUtility.RevealInFinder(player);
         }
 
         private static string Argument(string name)

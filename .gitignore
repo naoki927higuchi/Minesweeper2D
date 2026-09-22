@@ -9,3 +9,7 @@
 /*.sln
 /Tests/bin/
 /Tests/obj/
+/bin/
+/.local/
+*.keystore
+*.jks
