@@ -100,6 +100,7 @@ dotnet run --project .\Tests\Rules.Tests.csproj --configuration Release --no-res
 
 ## GitHubから取得する配布ZIP
 
+- [Minesweeper2D 1.1.1](Distribution/Minesweeper2D-1.1.1-Windows.zip) / [SHA256](Distribution/Minesweeper2D-1.1.1-Windows.zip.sha256)（最新）
 - [Minesweeper2D 1.0.0](Distribution/Minesweeper2D-1.0.0-Windows.zip) / [SHA256](Distribution/Minesweeper2D-1.0.0-Windows.zip.sha256)
 
 アクセス権のあるユーザーがZIPのファイル画面からダウンロードできます。ZIP全体を展開し、同梱説明書に従ってください。

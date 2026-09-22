@@ -1,5 +1,13 @@
 # 開発・公開履歴
 
+## Windows版1.1.1の公開・GitHubへのpush — 2026-09-22 21:40:00 +0900
+
+- ユーザー指示により、Android対応（1.1.0／1.1.1）とAndroid規約のコミットをGitHubへpushし、Windows版1.1.1の配布ZIPを公開。
+- 採用ZIP：`Builds/Releases/Minesweeper-1.1.1-win-x64-20260922T123753Z-c2831c04.zip`。既存の `bin/Release-1.1.1/`（49dd3f1で作成・起動と左右クリック操作を確認済み）から `ReleasePackage.Create` で梱包。再ビルドはしていない。
+- 検証：ZIPの156ファイルがビルド出力と完全一致、同梱SHA256SUMSとの不一致0、デバッグ用ファイル0。展開したexeをヘッドレスで10秒間起動し、例外ログなし（画面表示・クリック操作の検証は含まない）。
+- `Distribution/Minesweeper2D-1.1.1-Windows.zip`（40,561,673バイト、SHA256: d65cc0c80e0ba00620da08cbae8c577ce25a2d9e1d6a912b577ebe9673f3d9c6）とSHA256・配布情報JSONを配置し、最新バイナリーのREADMEを1.1.1へ更新。1.0.0のZIPは保持。
+- Android APKはAndroid規約に従い、GitHubへ配置しない。
+
 ## Android成果物管理規約の標準化 — 2026-09-22 20:24:00 +0900
 
 - ワークスペース共通のAGENTS.md／PLATFORM-POLICY.mdと、本プロジェクトのAGENTS.md／RELEASE-POLICY.md／README.mdにAndroidの正式成果物・実機確認・GitHub運用規約を永続化。

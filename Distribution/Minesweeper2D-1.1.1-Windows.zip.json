@@ -1,0 +1,9 @@
+{
+  "ReleaseVersion": "1.1.1",
+  "PreparedAt": "2026-09-22T21:38:57.1450084+09:00",
+  "PreparationCommit": "708515533aeebd8b52dab32105554e2d8879af9e",
+  "SourceZip": "Builds/Releases/Minesweeper-1.1.1-win-x64-20260922T123753Z-c2831c04.zip",
+  "SHA256": "d65cc0c80e0ba00620da08cbae8c577ce25a2d9e1d6a912b577ebe9673f3d9c6",
+  "Size": 40561673,
+  "Note": "Explicitly selected local package; complete product-specific validation before committing and pushing."
+}
