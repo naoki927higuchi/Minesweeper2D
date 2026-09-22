@@ -51,7 +51,7 @@
 
 ## Androidの配布・フォルダー規約（2026-09-22）
 
-- Windowsと共通のVERSIONを正とし、互換機能追加はマイナー更新、修正はパッチ更新。HISTORY.mdに日時と概要を記録し、検証後ローカルコミットを作成する。
+- Windowsと共通のVERSION.txtを正とし、互換機能追加はマイナー更新、修正はパッチ更新。HISTORY.mdに日時と概要を記録し、検証後ローカルコミットを作成する。
 - APKは `bin/Android/Release-<Version>/Minesweeper-<Version>.apk` に出力し、SHA256・マニフェスト・署名の検証結果を併置する。Windows出力と分離しGit対象外とする。
 - AndroidはARM64/IL2CPP Release。Development Build、Script Debugging、Profiler、シンボル生成を無効化し、実際のAPKを検証する。Google Play向けAABは不要。
 - 専用Release鍵を使用する。鍵とDPAPI暗号化パスワードは `.local/android-signing/` に保管しGitへ追加しない。秘密情報をソースやログに記録しない。同一アプリの更新には同一鍵を使う。

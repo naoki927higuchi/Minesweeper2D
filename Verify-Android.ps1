@@ -8,8 +8,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Cannot inspect APK manifest.' }
 if ($badging -match 'application-debuggable') { throw 'APK is debuggable.' }
 if (-not ($badging -match "native-code: 'arm64-v8a'")) { throw 'APK must contain ARM64 code.' }
 if (-not ($badging -match "package: name='com.fieldnotes.minesweeper'")) { throw 'Unexpected package identity.' }
-$version = (Get-Content "$PSScriptRoot/VERSION" -Raw).Trim()
-if (-not ($badging -match "versionName='$([regex]::Escape($version))'")) { throw 'APK version differs from VERSION.' }
+$version = (Get-Content "$PSScriptRoot/VERSION.txt" -Raw).Trim()
+if (-not ($badging -match "versionName='$([regex]::Escape($version))'")) { throw 'APK version differs from VERSION.txt.' }
 $signature = & "$($buildTools.FullName)/apksigner.bat" verify --verbose --print-certs $Apk 2>&1
 if ($LASTEXITCODE -ne 0) { throw 'APK signature verification failed.' }
 if ($signature -match 'CN=Android Debug') { throw 'APK uses the Android debug signing key.' }

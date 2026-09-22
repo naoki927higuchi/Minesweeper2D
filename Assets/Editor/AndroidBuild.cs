@@ -13,7 +13,7 @@ namespace Minesweeper.Editor
         public static void BuildRelease()
         {
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            string version = File.ReadAllText(Path.Combine(root, "VERSION")).Trim();
+            string version = File.ReadAllText(Path.Combine(root, "VERSION.txt")).Trim();
             ReleasePackage.ValidateVersion(version);
             string output = Path.Combine(root, "bin", "Android", "Release-" + version, "Minesweeper-" + version + ".apk");
             if (File.Exists(output)) throw new IOException("APK already exists: " + output);
@@ -26,7 +26,8 @@ namespace Minesweeper.Editor
             PlayerSettings.productName = "Minesweeper";
             PlayerSettings.bundleVersion = version;
             PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.fieldnotes.minesweeper");
-            PlayerSettings.Android.bundleVersionCode = 10100;
+            var semantic = Version.Parse(version);
+            PlayerSettings.Android.bundleVersionCode = checked(semantic.Major * 10000 + semantic.Minor * 100 + semantic.Build);
             PlayerSettings.Android.minSdkVersion = AndroidSdkVersions.AndroidApiLevel26;
             PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)36;
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;

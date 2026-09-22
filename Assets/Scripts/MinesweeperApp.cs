@@ -48,12 +48,21 @@ namespace Minesweeper
         private static Color Hex(string value) { ColorUtility.TryParseHtmlString("#" + value, out Color color); return color; }
         private void Update()
         {
-            if (focused && !paused && !help && board.State == GameState.Playing) elapsed += Time.unscaledDeltaTime;
+            if (skipResumeFrame) skipResumeFrame = false;
+            else if (focused && !paused && !help && board.State == GameState.Playing) elapsed += Time.unscaledDeltaTime;
             if (Application.platform == RuntimePlatform.Android) HandleTouch();
         }
-        private bool paused;
-        private void OnApplicationPause(bool value) { paused = value; touchId = -1; }
-        private void OnApplicationFocus(bool value) { focused = value; }
+        private bool paused, skipResumeFrame;
+        private void OnApplicationPause(bool value)
+        {
+            paused = value; touchId = -1;
+            if (!value && Application.platform == RuntimePlatform.Android) skipResumeFrame = true;
+        }
+        private void OnApplicationFocus(bool value)
+        {
+            focused = value;
+            if (value && Application.platform == RuntimePlatform.Android) skipResumeFrame = true;
+        }
         private void OnDestroy() { if (dot != null) Destroy(dot); if (font != null && Application.platform != RuntimePlatform.Android) Destroy(font); }
 
         private void NewGame()

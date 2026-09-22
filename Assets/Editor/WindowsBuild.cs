@@ -19,7 +19,7 @@ namespace Minesweeper.Editor
             if (EditorApplication.isPlayingOrWillChangePlaymode)
                 throw new InvalidOperationException("Stop Play mode before building.");
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            string version = Argument("-releaseVersion") ?? File.ReadAllText(Path.Combine(root, "VERSION")).Trim();
+            string version = Argument("-releaseVersion") ?? File.ReadAllText(Path.Combine(root, "VERSION.txt")).Trim();
             ReleasePackage.ValidateVersion(version);
             string player = Path.Combine(root, "bin", "Release-" + version);
             if (Directory.Exists(player)) throw new IOException("Output already exists: " + player);

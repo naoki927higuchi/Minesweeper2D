@@ -11,7 +11,7 @@ if (-not $UnityEditor) {
 if (-not (Test-Path -LiteralPath $UnityEditor -PathType Leaf)) {
     throw "Unity $editorVersion was not found. Pass -UnityEditor with the full path to Unity.exe."
 }
-if (-not $Version) { $Version = (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'VERSION') -Raw).Trim() }
+if (-not $Version) { $Version = (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'VERSION.txt') -Raw).Trim() }
 if ($Version -notmatch '\A\d+\.\d+\.\d+(?:-[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*)?\z') {
     throw 'Version must be MAJOR.MINOR.PATCH, optionally with a suffix such as -rc.1.'
 }

@@ -39,7 +39,7 @@ Windows / Android向けのUnity 2Dマインスイーパー。日本語UI、濃�
 ## Windows Releaseビルド
 
 `./Build-Windows.ps1` またはUnityの **Minesweeper → Build Release (Windows x64)** を実行します。
-`VERSION` と同じ版数の `bin/Release-<Version>/Minesweeper.exe` を、必要なDLL・データと一緒に出力します。既存の出力先は上書きせず停止します。通常ビルドではZIPを作りません。
+`VERSION.txt` と同じ版数の `bin/Release-<Version>/Minesweeper.exe` を、必要なDLL・データと一緒に出力します。既存の出力先は上書きせず停止します。通常ビルドではZIPを作りません。
 公開用ZIPは公開準備時にだけ作成します。既存の `Builds/Releases/` と `Distribution/` のZIPは過去成果物として保持します。
 
 ## Android Release APK
@@ -56,7 +56,7 @@ Android 8.0以上のARM64端末向け、IL2CPP Release、Development Build / Scr
 
 ```powershell
 adb devices -l
-adb -s <端末ID> install -r bin/Android/Release-1.1.0/Minesweeper-1.1.0.apk
+adb -s <端末ID> install -r bin/Android/Release-1.1.1/Minesweeper-1.1.1.apk
 adb -s <端末ID> shell monkey -p com.fieldnotes.minesweeper 1
 ```
 
@@ -66,11 +66,12 @@ Androidは縦画面・セーフエリア対応です。「開く」「旗」を�
 ## 構成
 
 - `Assets/Scripts/MineBoard.cs`：Unityに依存しないゲームルール。
-- `Assets/Scripts/MinesweeperApp.cs`：日本語のIMGUI画面、入力、時間計測、保存。2Dの正投影カメラを生成します。
+- `Assets/Scripts/MinesweeperApp.cs`：WindowsのIMGUI画面、共通描画・時間計測・保存。`MinesweeperApp.Mobile.cs` はAndroidの画面とタッチ操作。
 - `Assets/Editor/WindowsBuild.cs`：UnityのWindows x64リリースビルド。
 - `Assets/Editor/ReleasePackage.cs`：実行ファイルの検証、配布物の選別、ZIPとチェックサムの生成。
 - `Build-Windows.ps1`：Editor検出、CLI実行、完成EXEの検証。
-- `VERSION` と `Distribution/README-ja.txt`：配布バージョンと同梱する説明書。
+- `Build-Android.ps1` / `Assets/Editor/AndroidBuild.cs`：ARM64 Release APKの作成。`Verify-Android.ps1`：署名・マニフェスト・ネイティブシンボルの検証。
+- `VERSION.txt` と `Distribution/README-ja.txt`：配布バージョンと同梱する説明書。
 - `Tests/Program.cs` と `Tests/PackagingTests.cs`：外部テストパッケージ不要のルール・パッケージテスト。
 
 日本語表示はWindowsのYu Gothic / Meiryoフォントを使用します。

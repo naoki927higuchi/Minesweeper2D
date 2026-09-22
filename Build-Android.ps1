@@ -7,7 +7,7 @@ if (-not $UnityEditor) { $UnityEditor = "$env:ProgramFiles/Unity/Hub/Editor/$edi
 $android = Join-Path (Split-Path $UnityEditor) 'Data/PlaybackEngines/AndroidPlayer'
 $keytool = Join-Path $android 'OpenJDK/bin/keytool.exe'
 if (-not (Test-Path $keytool)) { throw 'Install Android Build Support with SDK, NDK and OpenJDK in Unity Hub.' }
-$version = (Get-Content "$PSScriptRoot/VERSION" -Raw).Trim()
+$version = (Get-Content "$PSScriptRoot/VERSION.txt" -Raw).Trim()
 $output = "$PSScriptRoot/bin/Android/Release-$version/Minesweeper-$version.apk"
 if (Test-Path $output) { throw "Release APK already exists: $output" }
 $local = "$PSScriptRoot/.local/android-signing"
@@ -21,7 +21,7 @@ if (-not (Test-Path $secretPath)) {
     $secret = ConvertTo-SecureString ([Convert]::ToBase64String($bytes)) -AsPlainText -Force
     $secret | ConvertFrom-SecureString | Set-Content $secretPath
 }
-$secure = Get-Content $secretPath -Raw | ConvertTo-SecureString
+$secure = (Get-Content $secretPath -Raw).Trim() | ConvertTo-SecureString
 $env:MINESWEEPER_KEY_PASSWORD = [Net.NetworkCredential]::new('', $secure).Password
 $env:MINESWEEPER_KEYSTORE = $keyPath
 try {
