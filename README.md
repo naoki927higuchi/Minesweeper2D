@@ -107,3 +107,9 @@ dotnet run --project .\Tests\Rules.Tests.csproj --configuration Release --no-res
 ## ソースと配布物の公開
 
 [最新バイナリー](Distribution/README.md)からWindows版ZIPをダウンロードできます。ソース一式はこのリポジトリで公開しています。共同開発、Issues、Pull requestsは受け付けていません。
+
+## Android APKの扱い
+
+AndroidのRelease APKはローカル実機検証用です。今回のゴールは、そのAPKをGalaxy S26 Ultraへインストールして正常にプレイできることの確認までです。GitHub ReleasesやリポジトリからのAPK配布、「自己責任」を前提にした野良APK配布は行いません。GitHubではAndroid対応を含むソースコード・Unityプロジェクト・変更履歴を管理します。
+
+一般ユーザー向け配布、Google Play公開、公開用署名、ストア対応は通常のリリース作業に含めず、別途指示がある場合のみ実施します。既存のWindows版ZIPの公開運用は継続します。詳しくは [RELEASE-POLICY.md](RELEASE-POLICY.md) を参照してください。

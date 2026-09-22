@@ -1,5 +1,14 @@
 # 開発・公開履歴
 
+## Android成果物管理規約の標準化 — 2026-09-22 20:24:00 +0900
+
+- ワークスペース共通のAGENTS.md／PLATFORM-POLICY.mdと、本プロジェクトのAGENTS.md／RELEASE-POLICY.md／README.mdにAndroidの正式成果物・実機確認・GitHub運用規約を永続化。
+- Androidはデバッグ機能・シンボルを含まない最適化済みRelease APKをローカルで版数別に保管し、実機確認はそのAPK自体で行う。
+- GitHubはソース・Unityプロジェクト・履歴の管理に使用し、APKをGitHub Releases等やリポジトリから一般配布しない。APKの誤追加防止を.gitignoreへ追加。
+- 今回のゴールはGalaxy S26 UltraへのRelease APKインストールと正常プレイ確認まで。一般配布・Google Play・公開用署名・ストア対応は別途指示時のみ。
+- Windowsの既存ビルド・GitHub・配布ZIP規約は変更なし。Web・Android以外のスマートフォン向け規約は未確定のままとし、推測で追加しない。
+- 規約のみの変更につき製品版数1.1.1を維持。再ビルド・成果物移動・公開・pushは行っていない。
+
 ## 1.1.1 — 2026-09-22 19:53:00 +0900
 
 - Android IL2CPPビルドでC++の標準ヘッダーversionと衝突した版数ファイルをVERSION.txtへ変更。両OSのビルド・検証スクリプトと規約を追従。
